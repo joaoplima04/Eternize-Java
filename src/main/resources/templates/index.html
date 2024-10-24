@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{partials/base :: head}">
+    <title th:text="'Eternize - Produtos'"></title>
+</head>
+<body>
+    <header th:replace="~{partials/header :: header}"></header>
+    <main>
+        <section class="produtos">
+            <div th:if="${message}" class="alert alert-success" role="alert">
+                <span th:text="${message}"></span>
+            </div>
+            <h2 class="titulo">Alugue os mais elegantes itens de mesa posta!</h2>
+            <h2 class="titulo">Produtos</h2>
+        </section>
+        <section class="cards_container">
+            <section class="cardsSection1">
+                <a th:href="@{categoria/GUARDANAPO}" class="ancor">
+                    <div class="cards">
+                        <img src="/imagens/guardanapos.png" class="imagem">
+                        <p class="dg">Guardanapos</p>
+                    </div>
+                </a>
+                <a th:href="@{categoria/SOUSPLAT}" class="ancor">
+                    <div class="cards">
+                        <img src="/imagens/sousplats.png" class="imagem">
+                        <p class="dg">Sousplats</p>
+                    </div>
+                </a>
+                <a th:href="@{categoria/JOGO_AMERICANO}" class="ancor">
+                    <div class="cards">
+                        <img src="/imagens/jogos_americanos.png" class="imagem">
+                        <p class="dg">Jogos Americanos</p>
+                    </div>
+                </a>
+                <a th:href="@{categoria/PRATO_RASO}" class="ancor">
+                    <div class="cards">
+                        <img src="/imagens/pratos.png" class="imagem">
+                        <p class="dg">Pratos Rasos</p>
+                    </div>
+                </a>
+                <a href="#" class="ancor">
+                    <div class="cards">
+                        <img src="/imagens/porta_guardanapos.png" class="imagem">
+                        <p class="dg">Porta Guardanapos</p>
+                    </div>
+                </a>
+                <a th:href="@{/categories/categoria/TACAS}" class="ancor">
+                    <div class="cards">
+                        <img src="/imagens/tacas.png" class="imagem">
+                        <p class="dg">Taças</p>
+                    </div>
+                </a>
+                <a href="#" class="ancor">
+                    <div class="cards">
+                        <img src="/imagens/talheres.png" class="imagem">
+                        <p class="dg">Talheres</p>
+                    </div>
+                </a>
+                <a href="#" class="ancor">
+                    <div class="cards">
+                        <img src="/imagens/trilhos.png" class="imagem">
+                        <p class="dg">Trilhos de Mesa</p>
+                    </div>
+                </a>
+                <a th:href="@{/categories/categoria/CHA_E_CAFE}" class="ancor">
+                    <div class="cards">
+                        <img src="/imagens/cafedatarde.png" class="imagem">
+                        <p class="dg">Café e Chá da Tarde</p>
+                    </div>
+                </a>
+            </section>
+        </section>
+    </main>
+</body>
+</html>
