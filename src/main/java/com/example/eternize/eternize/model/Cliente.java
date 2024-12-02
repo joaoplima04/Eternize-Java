@@ -2,20 +2,23 @@ package com.example.eternize.eternize.model;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
-import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "cliente")
-public class Cliente {
+public class Cliente implements UserDetails{
 
     @Id
     @Column(name = "cpf", nullable = false, length = 11)
@@ -25,14 +28,12 @@ public class Cliente {
     private String email;
     private String telefone;
     
-    @DateTimeFormat(pattern = "dd/MM/yyyy")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date dataNascimento;
     
     private String password;
     private Boolean superuser = false;
 
-    @OneToMany(mappedBy = "cliente")
-    private List<ItemCarrinho> itensCarrinho;
     
     // Métodos construtores da classe
     
@@ -41,7 +42,7 @@ public class Cliente {
 	}
 
 	public Cliente(String cpf, String nome, String email, String telefone, Date dataNascimento, String password,
-			Boolean superuser, List<ItemCarrinho> itensCarrinho) {
+			Boolean superuser) {
 		super();
 		this.cpf = cpf;
 		this.nome = nome;
@@ -50,7 +51,6 @@ public class Cliente {
 		this.setDataNascimento(dataNascimento);
 		this.password = password;
 		this.superuser = superuser;
-		this.itensCarrinho = itensCarrinho;
 	}
 	
 	// Métodos de acesso da classe
@@ -137,14 +137,6 @@ public class Cliente {
 	public void setSuperuser(Boolean superuser) {
 		this.superuser = superuser;
 	}
-
-	public List<ItemCarrinho> getItensCarrinho() {
-		return itensCarrinho;
-	}
-
-	public void setItensCarrinho(List<ItemCarrinho> itensCarrinho) {
-		this.itensCarrinho = itensCarrinho;
-	}
 	
 	@Override
 	public String toString() {
@@ -155,8 +147,18 @@ public class Cliente {
 	            ", telefone='" + telefone + '\'' +
 	            ", dataNascimento=" + dataNascimento +
 	            ", superuser=" + superuser +
-	            ", itensCarrinho=" + (itensCarrinho != null ? itensCarrinho.size() : 0) + " itens" + // Exibindo a quantidade de itens no carrinho
 	            '}';
+	}
+	
+	@Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return Collections.singleton(new SimpleGrantedAuthority("ROLE_CLIENTE"));
+    }
+
+	@Override
+	public String getUsername() {
+		// TODO Auto-generated method stub
+		return null;
 	}
     
 }

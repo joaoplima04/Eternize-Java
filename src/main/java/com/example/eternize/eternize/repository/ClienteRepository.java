@@ -9,5 +9,7 @@ import com.example.eternize.eternize.model.Cliente;
 public interface ClienteRepository extends JpaRepository<Cliente, Long>{
     boolean existsByEmail(String email);
     boolean existsByCpf(String cpf);
+    boolean existsByTelefone(String telefone);
+	Cliente getByEmail(String email);
 
 }

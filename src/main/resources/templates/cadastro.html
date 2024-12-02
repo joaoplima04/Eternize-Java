@@ -5,13 +5,19 @@
 	</head>
 <body>
 	<header th:replace="~{partials/header :: header}"></header>
+	
+	<div class="row justify-content-center mt-5">
+		<div th:if="${errorMessage}" class="alert alert-danger">
+		    <span th:text="${errorMessage}"></span>
+	</div>
+	
     <div class="container">
         <div class="row justify-content-center mt-5">
             <div class="col-md-6">
                 <div class="card">
                     <div class="card-body">
                         <h2 class="card-title text-center">Cadastro</h2>
-						<form action="/users/cadastro_post" method="post" th:object="${cliente}">
+						<form id="formulario" action="/users/cadastro_post" method="post" th:object="${cliente}">
 						    <div class="form-group">
 						        <label for="cpf">CPF</label>
 						        <input type="text" class="form-control" id="cpf" th:field="*{cpf}" placeholder="Digite seu CPF" required>
@@ -30,7 +36,7 @@
 						    </div>
 						    <div class="form-group">
 						        <label for="data_nascimento">Data de Nascimento</label>
-						        <input type="date" class="form-control" id="data_nascimento" th:field="*{dataNascimento}" format="dd/mm/yyyy" required>
+						        <input type="date" class="form-control" id="data_nascimento" th:field="*{dataNascimento}" th:value="${#dates.format(dataNascimento, 'yyyy-MM-dd')}" />
 						    </div>
 						    <div class="form-group">
 						        <label for="password">Senha</label>
@@ -54,57 +60,62 @@
 
     <script src="https://unpkg.com/imask"></script>
     <script>
+		function ajustarFormatacao() {
+				    // Remove a máscara do CPF
+					var cpfElement = document.getElementById('cpf');
+				    const cpfValue = cpfElement.value.replace(/\D/g, '');
+				    cpfElement.value = cpfValue;
+					
+
+				    // Remove a máscara do 
+					var telefoneElement = document.getElementById('telefone');
+				    const telefoneValue = telefoneElement.value.replace(/\D/g, '');
+				    telefoneElement.value = telefoneValue;
+					
+				  }
 		document.addEventListener('DOMContentLoaded', function() {
+				
+			 
 		  // Máscara do CPF
 		  var cpfElement = document.getElementById('cpf');
 		  var maskOptions = {
 		    mask: '000.000.000-00'
 		  };
 		  var mask = IMask(cpfElement, maskOptions);
-
+		
+		  console.log("Está passando aqui")
 		  // Máscara do telefone
 		  var telefoneElement = document.getElementById('telefone');
 		  var maskOptions2 = {
 		    mask: '(00)00000-0000'
 		  };
 		  var mask2 = IMask(telefoneElement, maskOptions2);
+		  
+		  const form = document.getElementById('formulario');
+		  	    form.addEventListener('submit', function(event) {
+		  			event.preventDefault();
+		  			console.log("Passa aqui")
+		  		    ajustarFormatacao();
+					
+		  		    const password = document.getElementById('password').value;
+		  		    const confirmPassword = document.getElementById('confirm_password').value;
+		  		    const errorMessage = document.getElementById('passwordError');
+
+		  		    errorMessage.style.display = 'none';
+		  		    if (password !== confirmPassword) {
+		  				event.preventDefault();
+		  	        	errorMessage.textContent = 'As senhas não correspondem.';
+		  	        	errorMessage.style.display = 'block';
+		  		    } else {
+						form.submit();
+					}
+		  		 });
 
 		  // Função para ajustar a formatação
-		  function ajustarFormatacao() {
-		    // Remove a máscara do CPF
-			console.log("Está passando aqui caraleeeoooooo")
-		    const cpfValue = cpfElement.value.replace(/\D/g, '');
-		    cpfElement.value = cpfValue;
-			
-
-		    // Ajusta o valor da data
-		    const dateElement = document.getElementById('data_nascimento');
-		    const originalDate = dateElement.value; // formato yyyy-mm-dd
-		    const [year, month, day] = originalDate.split('-');
-		    const formattedDate = `${day}/${month}/${year}`;
-		    dateElement.value = formattedDate;
-		  }
-
-		  // Verifica se as senhas são iguais antes de enviar o formulário
-		  const form = document.querySelector('form');
-		  form.addEventListener('submit', function(event) {
-		    event.preventDefault(); // Evita o envio automático do formulário
-
-		    ajustarFormatacao(); // Chama a função para ajustar a formatação
-
-		    const password = document.getElementById('password').value;
-		    const confirmPassword = document.getElementById('confirm_password').value;
-		    const errorMessage = document.getElementById('passwordError');
-
-		    errorMessage.style.display = 'none';
-		    if (password !== confirmPassword) {
-		      errorMessage.textContent = 'As senhas não correspondem.';
-		      errorMessage.style.display = 'block';
-		    } else {
-		      form.submit(); // Submete o formulário manualmente após as alterações
-		    }
-		  });
 		});
+		
+				  
+	  	
     </script>
 </body>
 </html>

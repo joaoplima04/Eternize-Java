@@ -10,9 +10,6 @@ public class ItemCarrinho {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne
-    @JoinColumn(name = "cliente_cpf", nullable = false)
-    private Cliente cliente;
 
     @ManyToOne
     @JoinColumn(name = "produto_id", nullable = false)
@@ -21,6 +18,8 @@ public class ItemCarrinho {
     @ManyToOne
     @JoinColumn(name = "aluguel_id", nullable = true)
     private Aluguel aluguel;
+    
+    private String jsessionId;
     
     private Integer quantidade;
     private Double total;
@@ -31,28 +30,30 @@ public class ItemCarrinho {
 		super();
 	}
 
-public ItemCarrinho(Integer id, Cliente cliente, Produto produto, Aluguel aluguel, Integer quantidade, Double total) {
+public ItemCarrinho(Integer id, Produto produto, Aluguel aluguel, Integer quantidade, Double total, String jsessionId) {
 	super();
 	this.id = id;
-	this.cliente = cliente;
 	this.produto = produto;
 	this.aluguel = aluguel;
 	this.quantidade = quantidade;
 	this.total = total;
+	this.jsessionId = jsessionId;
 }
 
 //Métodos de acesso da classe
+
+
 
 public Integer getId() {
 	return id;
 }
 
-public Cliente getCliente() {
-	return cliente;
+public String getJsessionId() {
+	return jsessionId;
 }
 
-public void setCliente(Cliente cliente) {
-	this.cliente = cliente;
+public void setJsessionId(String jsessionId) {
+	this.jsessionId = jsessionId;
 }
 
 public Produto getProduto() {
@@ -83,8 +84,8 @@ public Double getTotal() {
 	return total;
 }
 
-public void setTotal(Double total) {
-	this.total = total;
+public void setTotal() {
+	this.total = this.getQuantidade() * this.produto.getPreco();
 }
 	
 	

@@ -8,7 +8,7 @@
 		<section class="produtos">
 		    <div id="alert-container" style="display: none; position: fixed; top: 200px; right: 300px; z-index: 1000;">
 		        <div class="alert alert-success" role="alert">
-		            Item adicionado ao carrinho. <a th:href="@{/cart/view}" class="alert-link">Ir ao carrinho</a>
+		            Item adicionado ao carrinho. <a th:href="@{/carrinho/}" class="alert-link">Ir ao carrinho</a>
 		        </div>
 		    </div>    
 		    <h2 class="titulo" th:text="${categoria}">Categoria</h2>
@@ -18,38 +18,43 @@
 		        <div th:each="produto : ${produtos}" class="cards">
 		            <img th:src="@{${produto.imagem}}" class="imagem2">
 		            <p class="dg" th:text="${produto.nome}">Nome do Produto</p>
-		            <a href="#" class="btn btn-outline-warning" onclick="event.preventDefault(); addToCart([[${produto.id}]])">Alugar</a>
+		            <button class="btn btn-outline-warning" onclick="addToCart(this)" th:value="${produto.id}">Alugar</button>
 		        </div>
 		    </section>
 		</section>
 
 		<script>
-		function addToCart(produtoId) {
-		    fetch(`/cart/add_to_cart/${produtoId}`, {
-		        method: "POST",
-		        headers: {
-		            "Content-Type": "application/json",
-		        },
-		    })
-		    .then(response => {
-		        if (response.ok) {
-		            showAlert();
-		        } else {
-		            console.error("Failed to add to cart");
-		        }
-		    })
-		    .catch(error => {
-		        console.error("Error:", error);
-		    });
-		}
-		
-		function showAlert() {
-		    const alertContainer = document.getElementById('alert-container');
-		    alertContainer.style.display = 'block';
-		    setTimeout(() => {
-		        alertContainer.style.display = 'none';
-		    }, 5000); // Hide alert after 5 seconds
-		}
+			
+			function showAlert() {
+			    const alertContainer = document.getElementById('alert-container');
+			    alertContainer.style.display = 'block';
+			    setTimeout(() => {
+			        alertContainer.style.display = 'none';
+			    }, 5000); // Hide alert after 5 seconds
+			}
+			
+			function addToCart(button) {
+				const produtoId = button.getAttribute('value');
+			    fetch(`/carrinho/adiciona-ao-carrinho/${produtoId}`, {
+			        method: "POST",
+			        headers: {
+			            "Content-Type": "application/json",
+			        },
+			    })
+			    .then(response => {
+			        if (response.ok) {
+			            showAlert();
+			        } else {
+			            console.error("Failed to add to cart");
+			        }
+			    })
+			    .catch(error => {
+			        console.error("Error:", error);
+			    });
+			}	
+			
+			
+			
 		</script>
 </body>
 </html>

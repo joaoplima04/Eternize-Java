@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head th:replace="~{partials/base :: head}">
+	    <title th:text="'Carrinho'"></title>
+	</head>
+	
+<body>
+	<header th:replace="~{partials/header :: header}"></header>
+	<div class="container mt-1">
+	  <h1 class="text-center mb-5">Seu carrinho</h1>
+	  <div th:if="${cartItems}">
+	    <div class="row">
+	      <div th:each="item : ${cartItems}" class="col-md-6 col-lg-4 mb-4 d-flex align-items-stretch">
+			<div th:id="'produto-' + ${item.id}">
+		        <div class="card h-100">
+		          <img th:src="@{${item.produto.imagem}}" class="card-img-top" th:alt="${item.produto.nome}">
+		          <div class="card-body d-flex flex-column">
+		            <h5 class="card-title" th:text="${item.produto.nome}">Nome do Produto</h5>
+		            <p class="card-text">R$ <span th:text="${item.produto.preco}">0.00</span></p>
+		            <div class="mt-auto">
+		              <div class="d-flex justify-content-between align-items-center mb-2">
+		                <form th:onclick="|updateQuantity(${item.id})|" class="d-inline-flex align-items-center">
+		                  <input type="number" th:id="'quantity-' + ${item.id}" name="quantity" th:value="${item.quantidade}" min="1" class="form-control form-control-sm mx-2 text-center" style="width: 60px;">
+		                </form>
+		                  <button type="submit" id="remove" class="btn btn-sm btn-outline-danger" onclick="removeFromCart()" th:value="${item.id}">Remover</button>
+		              </div>
+		            </div>
+		          </div>
+		        </div>
+		      </div>
+		    </div>
+			</div>
+	    <div class="row mt-4">
+	      <div class="col-md-12">
+	        <h4 class="text-right">Total: R$ <span id= "cart-total" th:text="${cartTotal}">0.00</span></h4>
+	      </div>
+	    </div>
+	    <!-- Informações de Locação e Entrega -->
+	    <div class="container mt-5">
+	      <div class="card">
+	        <div class="card-header">INFORMAÇÕES DE LOCAÇÃO</div>
+	        <div class="card-body">
+	          <form id="locacao-form" th:action="@{/locacao}" method="post" th:object="${entrega}">
+	            <!-- Campos para as informações de locação -->
+	            <div class="form-group">
+	              <label for="data-aluguel">Início da Locação</label>
+	              <input type="date" class="form-control" id="inicio-locacao" name="dataAluguel" placeholder="DD/MM/AAAA">
+	            </div>
+				<div class="form-group">
+				    <label for="hora-inicial">Hora Inicial</label>
+				    <input type="time" class="form-control" id="hora-inicial" name="hora_inicial">
+				</div>
+				<div class="form-group">
+				    <label for="data-devolucao">Término da Locação</label>
+				    <input type="date" class="form-control" id="termino-locacao" name="data_devolucao" placeholder="DD/MM/AAAA">
+				</div>
+				<div class="form-group">
+				    <label for="hora-final">Hora Final</label>
+				    <input type="time" class="form-control" id="hora-final" name="hora_final">
+				</div>
+				<div class="form-group">
+				  <label for="objetivo">Objetivo da Locação</label>
+				  <input type="text" class="form-control" id="objetivo" name="objetivo" placeholder="Aniversário, Casamento, Jantar...">
+				</div>
+                <div class="card mt-4">
+                    <div class="card-header">
+                        INFORMAÇÕES DE ENTREGA
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label for="tipo-entrega">Tipos de Entrega</label><br>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="tipo_entrega" id="retirar-loja" value="Retirar na Loja" onchange="toggleEntregaFields()">
+                                <label class="form-check-label" for="retirar-loja">Retirar na Loja</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="tipo_entrega" id="frete" value="Frete" onchange="toggleEntregaFields()">
+                                <label class="form-check-label" for="frete">Frete</label>
+                            </div>
+                        </div>
+                        <div id="entrega-fields">
+                            <div class="form-group">
+                                <label for="cep">CEP</label>
+                                <input type="text" class="form-control" id="cep" name="cep" placeholder="CEP">
+                            </div>
+                            <div class="form-group">
+                                <label for="endereco">Endereço</label>
+                                <input type="text" class="form-control" id="endereco" name="endereco" placeholder="Endereço">
+                            </div>
+                            <div class="form-group">
+                                <label for="bairro">Bairro</label>
+                                <input type="text" class="form-control" id="bairro" name="bairro" placeholder="Bairro">
+                            </div>
+                            <div class="form-group">
+                                <label for="cidade">Cidade</label>
+                                <input type="text" class="form-control" id="cidade" name="cidade" placeholder="Cidade">
+                            </div>
+                            <div class="form-group">
+                                <label for="numero">Número</label>
+                                <input type="text" class="form-control" id="numero" name="numero" placeholder="Número">
+                            </div>
+                            <div class="form-group">
+                                <label for="complemento">Complemento</label>
+                                <input type="text" class="form-control" id="complemento" name="complemento" placeholder="Complemento">
+                            </div>
+                            <div class="form-group">
+                                <label for="nome-destinatario">Nome do Destinatário</label>
+                                <input type="text" class="form-control" id="nome-destinatario" name="nome_destinatario" placeholder="Nome do Destinatário">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group mt-4">
+                    <label for="observacoes">OBSERVAÇÕES</label>
+                    <textarea class="form-control" id="observacoes" name="observacoes" rows="3"></textarea>
+                </div>
+        </div>
+    </div>
+
+    <div class="row mt-3">
+      <div class="col-md-12 text-center">
+        <button type="submit" class="btn btn-primary btn-lg">Solicitar orçamento</button>
+      </div>
+	 </div>
+	 </form>
+     </div>
+   </div>
+ </div>
+ 
+<div th:if="${vazio}">
+    <div class="alert alert-info text-center" role="alert">
+      Seu carrinho de compras está vazio!
+      <a href="/" class="alert-link">Voltar a página inicial</a>
+    </div>
+  </div>
+  
+  <script th:inline="javascript">
+    function updateQuantity(produtoId) {
+      const quantityInput = document.getElementById(`quantity-${produtoId}`);
+      const quantity = quantityInput.value;
+	  console.log("Passa por aqui");
+      fetch(`/carrinho/atualiza-quantidade/${produtoId}/${quantity}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      })
+	  .then(response => response.ok ? updateCartTotal() : console.error("Failed to update"));
+    }
+
+	function removeFromCart() {
+	  const buttonElement = document.getElementById('remove');
+	  const produtoId = buttonElement.getAttribute('value');
+	  fetch(`/carrinho/remover-do-carrinho/${produtoId}`, {
+	    method: "POST",
+	    headers: { "Content-Type": "application/json" },
+	  })
+	  .then(response => {
+	    if (response.ok) {
+	      console.log("Produto removido: " + produtoId);
+	      updateCartTotal();
+	      const produtoElement = document.getElementById(`produto-${produtoId}`);
+	      produtoElement.remove();
+	      
+	      // Verifica se o carrinho está vazio
+	      fetch(`/carrinho/verificar-vazio`)
+	      .then(response => response.json())
+	      .then(data => {
+	        if (data) {
+	          // Recarrega a página
+	          window.location.reload();
+	        }
+	      })
+	      .catch(error => console.error("Erro ao verificar carrinho vazio:", error));
+	    } else {
+	      console.error("Falha ao remover o produto do carrinho.");
+	    }
+	  })
+	  .catch(error => console.error("Erro ao tentar remover o produto:", error));
+	}
+	
+	function updateCartTotal() {
+	    fetch(`/carrinho/total-carrinho`)
+	    .then(response => response.json())
+	    .then(data => {
+	        const cartTotalElement = document.getElementById('cart-total');
+			console.log(data);
+	        cartTotalElement.textContent = data;
+	    })
+	    .catch(error => {
+	        console.error("Error fetching cart total:", error);
+	    });
+	  }
+	  
+	  updateCartTotal();
+  </script>
+  </body>
+  </html>
+				
+				
+				
+				
+				
+				
