@@ -52,7 +52,7 @@ public class ClienteController {
         // Verifica se o usuário está autenticado
         if (authentication != null && authentication.isAuthenticated() && 
             !(authentication.getPrincipal() instanceof String)) {
-            model.addAttribute("message", "Seu login já está ativo! Deseja fazer o logout?");
+            model.addAttribute("logado", "Seu login já está ativo! Deseja fazer o logout?");
         }
 
         return "login"; 

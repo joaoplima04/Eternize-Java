@@ -39,6 +39,10 @@ public class ClienteService {
 	public Optional<Cliente> findById(Long id) {
 		return clienteRepository.findById(id);
 	}
+	
+	public Optional<Cliente> findByEmail(String email) {
+		return clienteRepository.getByEmail(email);
+	}
 
 	public void cadastrar(Cliente cliente) throws Exception {
 		// Lógica para verificar e cadastrar cliente, por exemplo, checar se email ou
@@ -57,11 +61,11 @@ public class ClienteService {
 
 	public Authentication logar(String email, String password) {
 	    if (clienteRepository.existsByEmail(email)) {
-	        Cliente cliente = clienteRepository.getByEmail(email);
-	        String hashedPassword = cliente.getPassword();
+	        Optional<Cliente> cliente = clienteRepository.getByEmail(email);
+	        String hashedPassword = cliente.get().getPassword();
 	        if (passwordService.verifyPassword(password, hashedPassword)) {
 	            UsernamePasswordAuthenticationToken token = 
-	                new UsernamePasswordAuthenticationToken(cliente, null, cliente.getAuthorities());
+	                new UsernamePasswordAuthenticationToken(cliente, null, cliente.get().getAuthorities());
 	            SecurityContextHolder.getContext().setAuthentication(token);
 	            return token;
 	        }

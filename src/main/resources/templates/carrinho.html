@@ -6,6 +6,17 @@
 	
 <body>
 	<header th:replace="~{partials/header :: header}"></header>
+	
+	<div class="row justify-content-center mt-5">
+		<div th:if="${indisponivel}" class="alert alert-danger">
+		    <span th:text="Não temos a quantidade desejada do produto ${itemIndisponivel.produto.nome} para a data selecionada."></span>
+	</div>
+	
+	<div class="row justify-content-center mt-5">
+		<div th:if="${semEstoque}" class="alert alert-danger">
+			<span th:text="Não temos a quantidade desejada do produto ${itemSemEstoque.produto.nome}. O nosso estoque para o produto é: {itemSemEstoque.produto.quantidadeEstoque}"></span>
+	</div>
+	
 	<div class="container mt-1">
 	  <h1 class="text-center mb-5">Seu carrinho</h1>
 	  <div th:if="${cartItems}">
@@ -20,7 +31,7 @@
 		            <div class="mt-auto">
 		              <div class="d-flex justify-content-between align-items-center mb-2">
 		                <form th:onclick="|updateQuantity(${item.id})|" class="d-inline-flex align-items-center">
-		                  <input type="number" th:id="'quantity-' + ${item.id}" name="quantity" th:value="${item.quantidade}" min="1" class="form-control form-control-sm mx-2 text-center" style="width: 60px;">
+		                  <input type="number" th:id="'quantity-' + ${item.id}" name="quantity" th:value="${item.quantidade}" min="1" class="form-control form-control-sm mx-2 text-center" style="width: 60px;" onkeydown="return false;">
 		                </form>
 		                  <button type="submit" id="remove" class="btn btn-sm btn-outline-danger" onclick="removeFromCart()" th:value="${item.id}">Remover</button>
 		              </div>
@@ -40,27 +51,27 @@
 	      <div class="card">
 	        <div class="card-header">INFORMAÇÕES DE LOCAÇÃO</div>
 	        <div class="card-body">
-	          <form id="locacao-form" th:action="@{/locacao}" method="post" th:object="${entrega}">
+	          <form id="locacao-form" th:action="@{/carrinho/envia-aluguel}" method="post" th:object="${aluguel}">
 	            <!-- Campos para as informações de locação -->
 	            <div class="form-group">
-	              <label for="data-aluguel">Início da Locação</label>
-	              <input type="date" class="form-control" id="inicio-locacao" name="dataAluguel" placeholder="DD/MM/AAAA">
+	              <label for="dataInicioAluguel">Início da Locação</label>
+	              <input type="date" class="form-control" th:field="*{dataInicioAluguel}" placeholder="DD/MM/AAAA">
 	            </div>
 				<div class="form-group">
-				    <label for="hora-inicial">Hora Inicial</label>
-				    <input type="time" class="form-control" id="hora-inicial" name="hora_inicial">
+				    <label for="horaInicial">Hora Inicial</label>
+				    <input type="time" class="form-control" th:field="*{horaInicial}">
 				</div>
 				<div class="form-group">
-				    <label for="data-devolucao">Término da Locação</label>
-				    <input type="date" class="form-control" id="termino-locacao" name="data_devolucao" placeholder="DD/MM/AAAA">
+				    <label for="dataTerminoAluguel">Término da Locação</label>
+				    <input type="date" class="form-control" th:field="*{dataTerminoAluguel}" placeholder="DD/MM/AAAA">
 				</div>
 				<div class="form-group">
-				    <label for="hora-final">Hora Final</label>
-				    <input type="time" class="form-control" id="hora-final" name="hora_final">
+				    <label for="horaFinal">Hora Final</label>
+				    <input type="time" class="form-control" th:field="*{horaFinal}">
 				</div>
 				<div class="form-group">
 				  <label for="objetivo">Objetivo da Locação</label>
-				  <input type="text" class="form-control" id="objetivo" name="objetivo" placeholder="Aniversário, Casamento, Jantar...">
+				  <input type="text" class="form-control" th:field="*{objetivo}" placeholder="Aniversário, Casamento, Jantar...">
 				</div>
                 <div class="card mt-4">
                     <div class="card-header">
@@ -68,44 +79,40 @@
                     </div>
                     <div class="card-body">
                         <div class="form-group">
-                            <label for="tipo-entrega">Tipos de Entrega</label><br>
+                            <label for="tipoEntrega">Tipos de Entrega</label><br>
                             <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="tipo_entrega" id="retirar-loja" value="Retirar na Loja" onchange="toggleEntregaFields()">
+                                <input class="form-check-input" type="radio" th:field="*{tipoEntrega}" name="retirar-loja" id="retirar-loja" value="Retirar na Loja" onchange="toggleEntregaFields()">
                                 <label class="form-check-label" for="retirar-loja">Retirar na Loja</label>
                             </div>
                             <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="tipo_entrega" id="frete" value="Frete" onchange="toggleEntregaFields()">
+                                <input class="form-check-input" type="radio" th:field="*{tipoEntrega}" name="frete" id="frete" value="Frete" onchange="toggleEntregaFields()">
                                 <label class="form-check-label" for="frete">Frete</label>
                             </div>
                         </div>
                         <div id="entrega-fields">
                             <div class="form-group">
                                 <label for="cep">CEP</label>
-                                <input type="text" class="form-control" id="cep" name="cep" placeholder="CEP">
+                                <input type="text" class="form-control" id="cep" name="cep" th:field="*{entrega.cep}" placeholder="CEP">
                             </div>
                             <div class="form-group">
                                 <label for="endereco">Endereço</label>
-                                <input type="text" class="form-control" id="endereco" name="endereco" placeholder="Endereço">
+                                <input type="text" class="form-control" id="endereco" name="endereco" th:field="*{entrega.endereco}" placeholder="Endereço">
                             </div>
                             <div class="form-group">
                                 <label for="bairro">Bairro</label>
-                                <input type="text" class="form-control" id="bairro" name="bairro" placeholder="Bairro">
+                                <input type="text" class="form-control" id="bairro" name="bairro" th:field="*{entrega.bairro}" placeholder="Bairro">
                             </div>
                             <div class="form-group">
                                 <label for="cidade">Cidade</label>
-                                <input type="text" class="form-control" id="cidade" name="cidade" placeholder="Cidade">
+                                <input type="text" class="form-control" id="cidade" name="cidade" th:field="*{entrega.cidade}" placeholder="Cidade">
                             </div>
                             <div class="form-group">
                                 <label for="numero">Número</label>
-                                <input type="text" class="form-control" id="numero" name="numero" placeholder="Número">
+                                <input type="text" class="form-control" id="numero" name="numero" th:field="*{entrega.numero}" placeholder="Número">
                             </div>
                             <div class="form-group">
                                 <label for="complemento">Complemento</label>
-                                <input type="text" class="form-control" id="complemento" name="complemento" placeholder="Complemento">
-                            </div>
-                            <div class="form-group">
-                                <label for="nome-destinatario">Nome do Destinatário</label>
-                                <input type="text" class="form-control" id="nome-destinatario" name="nome_destinatario" placeholder="Nome do Destinatário">
+                                <input type="text" class="form-control" id="complemento" name="complemento" th:field="*{entrega.complemento}" placeholder="Complemento">
                             </div>
                         </div>
                     </div>
@@ -116,6 +123,10 @@
                 </div>
         </div>
     </div>
+	<div th:each="item, iterStat : ${cartItems}">
+	    <!-- Campo oculto para o ID do ItemCarrinho -->
+	    <input type="hidden" th:name="itemIds[]" th:value="${item.id}">
+	</div>
 
     <div class="row mt-3">
       <div class="col-md-12 text-center">
@@ -176,6 +187,17 @@
 	  })
 	  .catch(error => console.error("Erro ao tentar remover o produto:", error));
 	}
+	
+	function toggleEntregaFields() {
+	    const entregaFields = document.getElementById('entrega-fields');
+	    const retirarNaLoja = document.getElementById('retirar-loja').checked;
+
+	    if (retirarNaLoja) {
+	        entregaFields.classList.add('d-none');
+	    } else {
+	        entregaFields.classList.remove('d-none');
+	    }
+	  }
 	
 	function updateCartTotal() {
 	    fetch(`/carrinho/total-carrinho`)

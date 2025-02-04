@@ -1,5 +1,6 @@
 package com.example.eternize.eternize.service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,6 +28,10 @@ public class AluguelService {
     // Método para buscar um aluguel pelo ID
     public Optional<Aluguel> findById(Long id) {
         return aluguelRepository.findById(id);
+    }
+    
+    public Optional<List<Aluguel>> findByProdutoEDataSobreposta(Long id, Date dataInicio, Date dataTermino) {
+    	return aluguelRepository.findByProdutoEDataSobreposta(id, dataInicio, dataTermino);
     }
 
     // Método para salvar um novo aluguel ou atualizar um existente

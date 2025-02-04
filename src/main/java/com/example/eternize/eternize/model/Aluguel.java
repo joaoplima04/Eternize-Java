@@ -1,8 +1,25 @@
 package com.example.eternize.eternize.model;
 
-import jakarta.persistence.*;
+import java.security.Timestamp;
+import java.time.LocalTime;
 import java.util.Date;
 import java.util.List;
+
+import org.springframework.format.annotation.DateTimeFormat;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 
 @Entity
 @Table(name = "aluguel")
@@ -16,26 +33,33 @@ public class Aluguel {
     @JoinColumn(name = "cliente_cpf", nullable = false)
     private Cliente cliente;
 
-    @Temporal(TemporalType.DATE)
-    private Date dataAluguel;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private Date dataInicioAluguel;
+    
+    private LocalTime horaInicial;
 
-    @Temporal(TemporalType.DATE)
-    private Date dataPedido;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private Date dataTerminoAluguel;
+    
+    private LocalTime horaFinal;
 
     private String objetivo;
 
     @Temporal(TemporalType.DATE)
+    @Column(nullable = true)
     private Date dataDevolucao;
 
     private Double precoTotal;
     private String tipoEntrega;
+    
+    @Column(nullable = true)
     private String contrato;
 
     @OneToOne(mappedBy = "aluguel", cascade = CascadeType.ALL)
     private Entrega entrega;
 
-    @OneToMany(mappedBy = "aluguel")
-    private List<ItemCarrinho> itensCarrinho;
+    @OneToMany(mappedBy = "aluguel", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ItemCarrinho> itensAluguel;
     
     // Métodos construtores da classe
     
@@ -43,22 +67,33 @@ public class Aluguel {
 		super();
 	}
 
-	public Aluguel(Integer id, Cliente cliente, Date dataAluguel, Date dataPedido, String objetivo, Date dataDevolucao,
-			Double precoTotal, String tipoEntrega, String contrato, Entrega entrega, List<ItemCarrinho> itensCarrinho) {
+	
+	public Aluguel(Integer id, Cliente cliente, Date dataInicioAluguel, LocalTime horaInicial, Date dataTerminoAluguel,
+			LocalTime horaFinal, String objetivo, Date dataDevolucao, Double precoTotal, String tipoEntrega, String contrato,
+			Entrega entrega, List<ItemCarrinho> itensAluguel) {
 		super();
 		this.id = id;
 		this.cliente = cliente;
-		this.dataAluguel = dataAluguel;
-		this.dataPedido = dataPedido;
+		this.dataInicioAluguel = dataInicioAluguel;
+		this.horaInicial = horaInicial;
+		this.dataTerminoAluguel = dataTerminoAluguel;
+		this.horaFinal = horaFinal;
 		this.objetivo = objetivo;
 		this.dataDevolucao = dataDevolucao;
 		this.precoTotal = precoTotal;
 		this.tipoEntrega = tipoEntrega;
 		this.contrato = contrato;
 		this.entrega = entrega;
-		this.itensCarrinho = itensCarrinho;
+		this.itensAluguel = itensAluguel;
 	}
-	
+
+
+	public Aluguel(Entrega entrega) {
+		super();
+		this.entrega = entrega;
+	}
+
+
 	// Métodos de acesso da classe
 	
 	public Integer getId() {
@@ -72,22 +107,49 @@ public class Aluguel {
 	public void setCliente(Cliente cliente) {
 		this.cliente = cliente;
 	}
-
-	public Date getDataAluguel() {
-		return dataAluguel;
+	
+	public LocalTime getHoraInicial() {
+		return horaInicial;
 	}
 
-	public void setDataAluguel(Date dataAluguel) {
-		this.dataAluguel = dataAluguel;
+
+	public void setHoraInicial(LocalTime horaInicial) {
+		this.horaInicial = horaInicial;
 	}
 
-	public Date getDataPedido() {
-		return dataPedido;
+
+	public LocalTime getHoraFinal() {
+		return horaFinal;
 	}
 
-	public void setDataPedido(Date dataPedido) {
-		this.dataPedido = dataPedido;
+
+	public void setHoraFinal(LocalTime horaFinal) {
+		this.horaFinal = horaFinal;
 	}
+
+
+	public Date getDataInicioAluguel() {
+		return dataInicioAluguel;
+	}
+
+
+
+	public void setDataInicioAluguel(Date dataInicioAluguel) {
+		this.dataInicioAluguel = dataInicioAluguel;
+	}
+
+
+
+	public Date getDataTerminoAluguel() {
+		return dataTerminoAluguel;
+	}
+
+
+
+	public void setDataTerminoAluguel(Date dataTerminoAluguel) {
+		this.dataTerminoAluguel = dataTerminoAluguel;
+	}
+
 
 	public String getObjetivo() {
 		return objetivo;
@@ -137,12 +199,12 @@ public class Aluguel {
 		this.entrega = entrega;
 	}
 
-	public List<ItemCarrinho> getItensCarrinho() {
-		return itensCarrinho;
+	public List<ItemCarrinho> getItensAluguel() {
+		return itensAluguel;
 	}
 
-	public void setItensCarrinho(List<ItemCarrinho> itensCarrinho) {
-		this.itensCarrinho = itensCarrinho;
+	public void setItensAluguel(List<ItemCarrinho> itensAluguel) {
+		this.itensAluguel = itensAluguel;
 	}
 	
 	

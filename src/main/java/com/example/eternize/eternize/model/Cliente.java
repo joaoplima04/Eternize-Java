@@ -20,7 +20,9 @@ import jakarta.persistence.Table;
 @Table(name = "cliente")
 public class Cliente implements UserDetails{
 
-    @Id
+	private static final long serialVersionUID = 1L;
+
+	@Id
     @Column(name = "cpf", nullable = false, length = 11)
     private String cpf;
 

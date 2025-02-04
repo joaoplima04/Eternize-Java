@@ -1,4 +1,6 @@
 package com.example.eternize.eternize.config;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -41,6 +43,12 @@ public class SecurityConfig {
         		    .defaultSuccessUrl("/", true)
         		    .permitAll()
         		)
+         .logout(logout -> logout
+                 .logoutUrl("/users/logout") // URL para o logout
+                 .logoutSuccessUrl("/") // Redireciona após logout
+                 .invalidateHttpSession(true) // Invalida a sessão
+                 .deleteCookies("JSESSIONID") // Remove cookies
+             )
     	 .sessionManagement(session -> session
     			 	.sessionCreationPolicy(SessionCreationPolicy.NEVER)
     		        .maximumSessions(1) // Limita para apenas uma sessão ativa por usuário
@@ -54,10 +62,9 @@ public class SecurityConfig {
     @Bean
     public UserDetailsService userDetailsService() {
         return email -> {
-            Cliente cliente = clienteRepository.getByEmail(email);
-            if (cliente != null) {
-            	
-                return new User(cliente.getEmail(), cliente.getPassword(), cliente.getAuthorities());
+            Optional<Cliente> cliente = clienteRepository.getByEmail(email);
+            if (cliente.isPresent()) {
+                return new User(cliente.get().getEmail(), cliente.get().getPassword(), cliente.get().getAuthorities());
             }
             throw new UsernameNotFoundException("Usuário não encontrado");
         };
